@@ -1,0 +1,279 @@
+.category-page {
+  min-height: 100vh;
+  background-color: #f1f3f6;
+  padding: 20px 0;
+}
+
+.breadcrumb {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #878787;
+}
+
+.breadcrumb a {
+  color: #2874f0;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.category-header {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.category-header h1 {
+  font-size: 28px;
+  color: #212121;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.category-header p {
+  color: #878787;
+  font-size: 16px;
+  margin: 0;
+}
+
+.category-filters {
+  background: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.filter-label {
+  font-weight: 500;
+  color: #212121;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  color: #212121;
+  font-size: 14px;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 0;
+}
+
+.book-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.book-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.book-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.book-image {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.book-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover .book-image img {
+  transform: scale(1.05);
+}
+
+.book-info {
+  padding: 15px;
+}
+
+.book-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 5px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.author {
+  color: #878787;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.stars {
+  color: #ff9f00;
+  font-size: 14px;
+}
+
+.rating-value {
+  font-size: 14px;
+  color: #878787;
+  font-weight: 500;
+}
+
+.price-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.current-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212121;
+}
+
+.original-price {
+  font-size: 14px;
+  color: #878787;
+  text-decoration: line-through;
+}
+
+.discount {
+  font-size: 12px;
+  color: #388e3c;
+  font-weight: 500;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 12px;
+  background: #ff9f00;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.add-to-cart-btn:hover {
+  background: #e68900;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .category-page {
+    padding: 10px 0;
+  }
+  
+  .category-header {
+    padding: 20px 15px;
+    margin-bottom: 15px;
+  }
+  
+  .category-header h1 {
+    font-size: 24px;
+  }
+  
+  .category-filters {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .filter-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+  
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .book-image {
+    height: 250px;
+  }
+  
+  .book-info {
+    padding: 12px;
+  }
+  
+  .book-info h3 {
+    font-size: 15px;
+  }
+  
+  .current-price {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  
+  .book-image {
+    height: 200px;
+  }
+  
+  .book-info {
+    padding: 10px;
+  }
+  
+  .book-info h3 {
+    font-size: 14px;
+  }
+  
+  .author {
+    font-size: 13px;
+  }
+  
+  .current-price {
+    font-size: 15px;
+  }
+  
+  .add-to-cart-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,353 @@
+.profile-page-new {
+  min-height: 100vh;
+  background: #f1f3f6;
+  padding: 80px 0 20px;
+}
+
+.profile-container-new {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.sidebar {
+  width: 280px;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+
+.user-info {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+}
+
+.avatar-circle {
+  width: 50px;
+  height: 50px;
+  background: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.greeting {
+  margin: 0;
+  font-size: 14px;
+  color: #878787;
+}
+
+.user-name {
+  margin: 2px 0 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.menu-section {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.menu-item, .menu-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background: #f8f8f8;
+}
+
+.menu-icon {
+  font-size: 16px;
+  width: 20px;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.menu-arrow {
+  font-size: 18px;
+  color: #878787;
+}
+
+.submenu {
+  background: #fafafa;
+}
+
+.submenu-item {
+  padding: 12px 20px 12px 52px;
+  font-size: 14px;
+  color: #878787;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.submenu-item:hover {
+  background: #f0f0f0;
+  color: #2874f0;
+}
+
+.submenu-item.active {
+  color: #2874f0;
+  font-weight: 500;
+  background: #e8f4fd;
+}
+
+.amount {
+  color: #388e3c;
+  font-weight: 500;
+}
+
+.logout {
+  color: #878787;
+}
+
+.frequently-visited {
+  padding: 20px;
+}
+
+.frequently-visited h4 {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  color: #878787;
+  font-weight: 500;
+}
+
+.visited-links {
+  display: flex;
+  gap: 15px;
+}
+
+.visited-links a {
+  font-size: 12px;
+  color: #878787;
+  text-decoration: none;
+}
+
+.visited-links a:hover {
+  color: #2874f0;
+}
+
+.main-content {
+  flex: 1;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 24px;
+}
+
+.profile-content {
+  max-width: 600px;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #212121;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #2874f0;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  font-size: 14px;
+  background: #fafafa;
+}
+
+.form-input:disabled {
+  background: #fafafa;
+  color: #878787;
+}
+
+.gender-section {
+  margin-bottom: 32px;
+}
+
+.gender-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #212121;
+  font-weight: 400;
+}
+
+.radio-group {
+  display: flex;
+  gap: 24px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #212121;
+}
+
+.contact-section {
+  margin-bottom: 32px;
+}
+
+.contact-item {
+  margin-bottom: 24px;
+}
+
+.contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.contact-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #212121;
+  font-weight: 400;
+}
+
+.edit-link {
+  background: none;
+  border: none;
+  color: #2874f0;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.faq-section {
+  margin-bottom: 32px;
+}
+
+.faq-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #212121;
+  font-weight: 500;
+}
+
+.faq-item {
+  margin-bottom: 20px;
+}
+
+.faq-item h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #212121;
+  font-weight: 500;
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #878787;
+  line-height: 1.4;
+}
+
+.account-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.deactivate-btn {
+  background: none;
+  border: none;
+  color: #2874f0;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ff6161;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.section-content {
+  font-size: 16px;
+  color: #212121;
+  padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .profile-container-new {
+    flex-direction: column;
+    padding: 0 10px;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .account-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
