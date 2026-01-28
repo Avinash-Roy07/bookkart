@@ -1,4 +1,4 @@
-# Ink & Leaf - A Modern Bookstore Experience
+# BookKart - A Modern Bookstore Experience
 
 A premium React-based bookstore website with elegant design and modern user experience.
 
