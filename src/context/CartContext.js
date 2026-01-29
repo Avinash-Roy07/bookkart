@@ -13,6 +13,7 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [showAddedToCart, setShowAddedToCart] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState(null);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('bookCart');
@@ -36,8 +37,9 @@ export const CartProvider = ({ children }) => {
       return [...prev, { ...book, quantity: 1 }];
     });
     
+    setLastAddedItem(book);
     setShowAddedToCart(true);
-    setTimeout(() => setShowAddedToCart(false), 2000);
+    setTimeout(() => setShowAddedToCart(false), 3000);
   };
 
   const removeFromCart = (bookId) => {
@@ -77,7 +79,8 @@ export const CartProvider = ({ children }) => {
       getTotalItems,
       getTotalPrice,
       clearCart,
-      showAddedToCart
+      showAddedToCart,
+      lastAddedItem
     }}>
       {children}
     </CartContext.Provider>

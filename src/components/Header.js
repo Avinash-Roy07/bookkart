@@ -11,6 +11,17 @@ const Header = ({ user, onLoginClick, onLogout }) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const profileRef = useRef(null);
 
+  // Get user display name from localStorage
+  const getUserDisplayName = () => {
+    if (!user) return 'User';
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const currentUser = registeredUsers.find(u => u.email === user);
+    if (currentUser && currentUser.firstName) {
+      return `${currentUser.firstName} ${currentUser.lastName || ''}`.trim();
+    }
+    return (user.email || user)?.split('@')[0] || 'User';
+  };
+
   console.log('Header user:', user); // Debug log
 
   const handleLogoutClick = () => {
@@ -44,21 +55,6 @@ const Header = ({ user, onLoginClick, onLogout }) => {
           </div>
         </Link>
 
-        <div className="search-section">
-          <div className="search-bar">
-            <input 
-              type="text" 
-              placeholder="Search for Books, Authors and More"
-              className="search-input"
-            />
-            <button className="search-btn">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
         <div className="header-actions">
           <div className="action-item">
             {user ? (
@@ -71,7 +67,7 @@ const Header = ({ user, onLoginClick, onLogout }) => {
                     <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  <span>{(user.email || user)?.split('@')[0] || 'User'}</span>
+                  <span>{getUserDisplayName()}</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -105,14 +101,22 @@ const Header = ({ user, onLoginClick, onLogout }) => {
             <span>Cart</span>
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </Link>
-
-          <Link to="/books" className="action-item">
+        </div>
+      </div>
+      
+      {/* Search Section Below Header */}
+      <div className="search-section-below" style={{marginTop: '-50px'}}>
+        <div className="search-bar">
+          <input 
+            type="text" 
+            placeholder="Search for Books, Authors and More"
+            className="search-input"
+          />
+          <button className="search-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M4 19.5C4 18.837 4.26339 18.2011 4.73223 17.7322C5.20107 17.2634 5.83696 17 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M6.5 2H20V22H6.5C5.83696 22 5.20107 21.7366 4.73223 21.2678C4.26339 20.7989 4 20.163 4 19.5V4.5C4 3.83696 4.26339 3.20107 4.73223 2.73223C5.20107 2.26339 5.83696 2 6.5 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>Books</span>
-          </Link>
+          </button>
         </div>
       </div>
       

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/BookStore.css';
 
 const BookStore = ({ user, addToCart, onLoginClick }) => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [buyNowLoading, setBuyNowLoading] = useState(null);
 
   const books = [
     {
@@ -92,24 +95,97 @@ const BookStore = ({ user, addToCart, onLoginClick }) => {
     addToCart(book);
   };
 
-  const handleBuyNow = (book) => {
+  const handleBuyNow = async (book) => {
     if (!user) {
       onLoginClick();
       return;
     }
-    addToCart(book);
-    // Navigate to cart or checkout
+    
+    setBuyNowLoading(book.id);
+    
+    // Simulate loading
+    setTimeout(() => {
+      setBuyNowLoading(null);
+      navigate('/checkout', { state: { buyNowItem: book } });
+    }, 1500);
   };
 
   return (
     <div className="bookstore">
-      <div className="container">
-        <div className="bookstore-header">
-          <h1>Our Book Collection</h1>
-          <p>Discover your next favorite read from our curated selection</p>
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1>A Book Can Change Your Life</h1>
+            <p>Discover amazing stories and knowledge that will transform your perspective</p>
+            <button className="hero-btn">Explore Now</button>
+          </div>
+          <div className="hero-image">
+            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=500&fit=crop" alt="Featured Book" />
+          </div>
         </div>
+      </div>
 
-        <div className="filters-section">
+      {/* Featured Books Section */}
+      <div className="featured-section">
+        <div className="container">
+          <div className="featured-content">
+            <div className="featured-card large">
+              <div className="featured-image">
+                <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=300&h=200&fit=crop" alt="The Design of Everyday Things" />
+              </div>
+              <div className="featured-info">
+                <h3>The Design of Everyday Things</h3>
+                <p>Don Norman</p>
+                <span className="discount">50% OFF</span>
+              </div>
+            </div>
+            
+            <div className="featured-card">
+              <div className="featured-image">
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=150&fit=crop" alt="Book World" />
+              </div>
+              <div className="featured-info">
+                <h4>Book World is Best Choice For Learners</h4>
+                <button className="featured-btn">Explore</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Collections */}
+      <div className="collections-section">
+        <div className="container">
+          <h2 className="section-title">Popular Collections</h2>
+          
+          <div className="collection-filters">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                className={`filter-btn ${selectedCategory === category.id ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+
+          <div className="collection-grid">
+            {filteredBooks.slice(0, 4).map(book => (
+              <div key={book.id} className="collection-card">
+                <div className="collection-image">
+                  <img src={book.image} alt={book.title} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Search Section */}
+      <div className="search-section">
+        <div className="container">
           <div className="search-bar">
             <input
               type="text"
@@ -118,73 +194,71 @@ const BookStore = ({ user, addToCart, onLoginClick }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
-          <div className="categories">
-            {categories.map(category => (
-              <button
-                key={category.id}
-                className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category.id)}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
         </div>
+      </div>
 
-        <div className="books-grid">
-          {filteredBooks.map(book => (
-            <div key={book.id} className="book-card">
-              <div className="book-image">
-                <img src={book.image} alt={book.title} />
-                <div className="book-overlay">
-                  <button 
-                    className="quick-view-btn"
-                    onClick={() => handleAddToCart(book)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-              
-              <div className="book-info">
-                <h3 className="book-title">{book.title}</h3>
-                <p className="book-author">by {book.author}</p>
-                <p className="book-description">{book.description}</p>
-                
-                <div className="book-rating">
-                  <span className="stars">★★★★★</span>
-                  <span className="rating-value">{book.rating}</span>
-                </div>
-                
-                <div className="book-footer">
-                  <span className="book-price">${book.price}</span>
-                  <div className="book-actions">
+      {/* Books Grid */}
+      <div className="books-section">
+        <div className="container">
+          <div className="books-grid">
+            {filteredBooks.map(book => (
+              <div key={book.id} className="book-card">
+                <div className="book-image">
+                  <img src={book.image} alt={book.title} />
+                  <div className="book-overlay">
                     <button 
-                      className="add-to-cart-btn"
+                      className="quick-view-btn"
                       onClick={() => handleAddToCart(book)}
                     >
                       Add to Cart
                     </button>
-                    <button 
-                      className="buy-now-btn"
-                      onClick={() => handleBuyNow(book)}
-                    >
-                      Buy Now
-                    </button>
+                  </div>
+                </div>
+                
+                <div className="book-info">
+                  <h3 className="book-title">{book.title}</h3>
+                  <p className="book-author">by {book.author}</p>
+                  <p className="book-description">{book.description}</p>
+                  
+                  <div className="book-rating">
+                    <span className="stars">★★★★★</span>
+                    <span className="rating-value">{book.rating}</span>
+                  </div>
+                  
+                  <div className="book-footer">
+                    <span className="book-price">₹{Math.round(book.price * 75)}</span>
+                    <div className="book-actions">
+                      <button 
+                        className="add-to-cart-btn"
+                        onClick={() => handleAddToCart(book)}
+                      >
+                        Add to Cart
+                      </button>
+                      <button 
+                        className={`buy-now-btn ${buyNowLoading === book.id ? 'loading' : ''}`}
+                        onClick={() => handleBuyNow(book)}
+                        disabled={buyNowLoading === book.id}
+                      >
+                        {buyNowLoading === book.id ? (
+                          <span className="spinner"></span>
+                        ) : (
+                          'Buy Now'
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredBooks.length === 0 && (
-          <div className="no-results">
-            <h3>No books found</h3>
-            <p>Try adjusting your search or category filter.</p>
+            ))}
           </div>
-        )}
+
+          {filteredBooks.length === 0 && (
+            <div className="no-results">
+              <h3>No books found</h3>
+              <p>Try adjusting your search or category filter.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

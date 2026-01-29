@@ -27,7 +27,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
     setLoading(true);
     setError('');
 
-    // Check if user exists for login
     if (isLogin) {
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const userExists = registeredUsers.some(user => user.email === email);
@@ -38,7 +37,6 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         return;
       }
     } else {
-      // Check if user already exists for registration
       const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
       const userExists = registeredUsers.some(user => user.email === email);
       
@@ -49,18 +47,18 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
       }
     }
 
-    // Generate and send real OTP via email
     const otpCode = generateOTP();
     const emailResult = await sendOTPEmail(email, otpCode);
     
-    if (emailResult.success) {
-      storeOTP(email, otpCode);
-      setShowOtp(true);
-      setError('');
-    } else {
+    if (!emailResult.success) {
       setError(emailResult.message);
+      setLoading(false);
+      return;
     }
     
+    storeOTP(email, otpCode);
+    setShowOtp(true);
+    setError('');
     setLoading(false);
   };
 

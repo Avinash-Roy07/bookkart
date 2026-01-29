@@ -1,26 +1,75 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { generateOTP, sendOTPEmail, storeOTP, verifyOTP } from '../services/emailService';
 import '../styles/ProfilePages.css';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const user = localStorage.getItem('currentUser') || '';
   const [activeSection, setActiveSection] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [showEmailOTP, setShowEmailOTP] = useState(false);
   const [emailOTP, setEmailOTP] = useState('');
   const [newEmail, setNewEmail] = useState('');
+  const [isEditingMobile, setIsEditingMobile] = useState(false);
+  const [newMobile, setNewMobile] = useState('');
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    firstName: 'abhi',
-    lastName: 'raj',
-    email: user || 'facthint@gmail.com',
-    mobile: '+917369896771',
-    gender: 'male'
-  });
+  
+  // Load user data from localStorage
+  const getUserData = () => {
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const currentUser = registeredUsers.find(u => u.email === user);
+    return currentUser || {
+      firstName: '',
+      lastName: '',
+      email: user,
+      mobile: '',
+      gender: 'male'
+    };
+  };
+  
+  const [formData, setFormData] = useState(getUserData());
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const updatedData = { ...formData, [e.target.name]: e.target.value };
+    setFormData(updatedData);
+    
+    // Save to localStorage immediately
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedUsers = registeredUsers.map(user => 
+      user.email === formData.email ? { ...user, ...updatedData } : user
+    );
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+  };
+
+
+
+  const handleMobileEdit = () => {
+    setIsEditingMobile(true);
+    setNewMobile(formData.mobile);
+  };
+
+  const handleMobileSave = () => {
+    if (!newMobile.trim()) {
+      setError('Please enter a mobile number');
+      return;
+    }
+    
+    const updatedData = { ...formData, mobile: newMobile };
+    setFormData(updatedData);
+    
+    // Save to localStorage
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedUsers = registeredUsers.map(user => 
+      user.email === formData.email ? { ...user, ...updatedData } : user
+    );
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+    
+    setIsEditingMobile(false);
+    setNewMobile('');
+    setError('');
   };
 
   const handleEmailEdit = async () => {
@@ -90,12 +139,20 @@ const Profile = () => {
   };
 
   const handleSave = () => {
+    // Save current form data to localStorage
+    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+    const updatedUsers = registeredUsers.map(user => 
+      user.email === formData.email ? { ...user, ...formData } : user
+    );
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+    
     setIsEditing(false);
     setError('');
   };
 
   const renderContent = () => {
     switch(activeSection) {
+
       case 'profile':
         return (
           <div className="profile-content">
@@ -165,13 +222,13 @@ const Profile = () => {
               <div className="contact-item">
                 <div className="contact-header">
                   <h3>Email Address</h3>
-                  <button className="edit-link" onClick={() => setNewEmail(formData.email)}>Edit</button>
+                  <button className="edit-link" onClick={() => setNewEmail('')}>Edit</button>
                 </div>
                 {!showEmailOTP ? (
                   <>
                     <input 
                       type="email" 
-                      value={newEmail || formData.email}
+                      value={newEmail}
                       onChange={(e) => setNewEmail(e.target.value)}
                       className="form-input"
                       placeholder="Enter new email"
@@ -210,16 +267,37 @@ const Profile = () => {
               <div className="contact-item">
                 <div className="contact-header">
                   <h3>Mobile Number</h3>
-                  <button className="edit-link">Edit</button>
+                  <button className="edit-link" onClick={handleMobileEdit}>Edit</button>
                 </div>
-                <input 
-                  type="tel" 
-                  name="mobile"
-                  value={formData.mobile}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className="form-input"
-                />
+                {!isEditingMobile ? (
+                  <p className="contact-display">{formData.mobile || 'No mobile number added'}</p>
+                ) : (
+                  <>
+                    <input 
+                      type="tel" 
+                      value={newMobile}
+                      onChange={(e) => setNewMobile(e.target.value)}
+                      className="form-input"
+                      placeholder="Enter mobile number"
+                    />
+                    <div style={{marginTop: '10px'}}>
+                      <button 
+                        className="verify-btn" 
+                        onClick={handleMobileSave}
+                        style={{padding: '8px 16px', background: '#2874f0', color: 'white', border: 'none', borderRadius: '4px', marginRight: '10px'}}
+                      >
+                        Save
+                      </button>
+                      <button 
+                        className="cancel-btn" 
+                        onClick={() => {setIsEditingMobile(false); setNewMobile('');}}
+                        style={{padding: '8px 16px', background: '#ccc', color: 'black', border: 'none', borderRadius: '4px'}}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -268,12 +346,12 @@ const Profile = () => {
             </div>
             <div className="user-details">
               <p className="greeting">Hello,</p>
-              <h3 className="user-name">Abhi Raj</h3>
+              <h3 className="user-name">{formData.firstName} {formData.lastName}</h3>
             </div>
           </div>
 
           <div className="menu-section">
-            <div className="menu-item" onClick={() => setActiveSection('orders')}>
+            <div className="menu-item" onClick={() => navigate('/orders')}>
               <span className="menu-icon">📦</span>
               <span className="menu-text">MY ORDERS</span>
               <span className="menu-arrow">›</span>
@@ -302,7 +380,7 @@ const Profile = () => {
           </div>
 
           <div className="menu-section">
-            <div className="menu-item logout" onClick={() => window.location.href = '/'}>
+            <div className="menu-item logout" onClick={() => navigate('/')}>
               <span className="menu-icon">🚪</span>
               <span className="menu-text">Logout</span>
             </div>

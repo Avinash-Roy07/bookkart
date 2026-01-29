@@ -1,45 +1,42 @@
 import emailjs from '@emailjs/browser';
 
-// EmailJS configuration - Your exact credentials
-const EMAILJS_SERVICE_ID = 'service_8wi3pn9';
-const EMAILJS_TEMPLATE_ID = 'template_y1gpl3k';
-const EMAILJS_PUBLIC_KEY = 'coG1Dv03xyu-g0x9c';
+// Your exact EmailJS credentials
+const SERVICE_ID = 'service_8wi3pn9';
+const TEMPLATE_ID = 'template_y1gpl3k';
+const PUBLIC_KEY = 'coG1Dv03xyu-g0x9c';
 
-// Initialize EmailJS
-emailjs.init(EMAILJS_PUBLIC_KEY);
+// Initialize EmailJS with your public key
+emailjs.init(PUBLIC_KEY);
 
-// Generate random 6-digit OTP
 export const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Send OTP email using your exact template parameters
 export const sendOTPEmail = async (userEmail, otp) => {
   try {
     const templateParams = {
-      email: userEmail,        // {{email}} - recipient email in your template
-      user_name: userEmail.split('@')[0],  // {{user_name}} - user name
-      otp_code: otp           // {{otp_code}} - the OTP code
+      email: userEmail,
+      user_name: userEmail.split('@')[0],
+      otp_code: otp
     };
 
-    console.log('Sending OTP email to:', userEmail, 'with OTP:', otp);
-    
+    console.log('Sending email with params:', templateParams);
+
     const response = await emailjs.send(
-      EMAILJS_SERVICE_ID,
-      EMAILJS_TEMPLATE_ID,
-      templateParams
+      SERVICE_ID,
+      TEMPLATE_ID,
+      templateParams,
+      PUBLIC_KEY
     );
 
-    console.log('Email sent successfully:', response);
-    return { success: true, message: 'OTP sent to your email!' };
-    
+    console.log('EmailJS response:', response);
+    return { success: true, message: 'OTP sent successfully!' };
   } catch (error) {
-    console.error('EmailJS error:', error);
+    console.error('EmailJS error details:', error);
     return { success: false, message: 'Failed to send OTP. Please try again.' };
   }
 };
 
-// Store OTP temporarily
 const otpStorage = new Map();
 
 export const storeOTP = (email, otp) => {
@@ -49,7 +46,6 @@ export const storeOTP = (email, otp) => {
     attempts: 0
   });
   
-  // Auto-delete after 10 minutes
   setTimeout(() => {
     otpStorage.delete(email);
   }, 10 * 60 * 1000);

@@ -1,16 +1,49 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import AuthModal from '../components/AuthModal';
 import '../styles/BookDetails.css';
 
 const BookDetails = () => {
   const { category, bookId } = useParams();
+  const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { addToCart } = useCart();
+  const [buyNowLoading, setBuyNowLoading] = useState(false);
+  const [addToCartLoading, setAddToCartLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showMoreOffers, setShowMoreOffers] = useState(false);
+  const [showLearnMore, setShowLearnMore] = useState(false);
+  const [showAllQuestions, setShowAllQuestions] = useState(false);
+  const [newQuestion, setNewQuestion] = useState('');
+  const [questions, setQuestions] = useState([
+    {
+      id: 1,
+      question: 'Is this book available in hardcover?',
+      answer: 'Yes, both paperback and hardcover editions are available.',
+      asker: 'book lover',
+      certified: true,
+      likes: 15,
+      dislikes: 2
+    },
+    {
+      id: 2,
+      question: 'How many pages does this book have?',
+      answer: 'This book has 236 pages.',
+      asker: 'reader123',
+      certified: true,
+      likes: 8,
+      dislikes: 1
+    }
+  ]);
+  const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart();
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) setUser(savedUser);
+  }, []);
 
   // All books database
   const allBooks = {
@@ -851,6 +884,92 @@ const BookDetails = () => {
     return accessories;
   };
 
+  const handleAddToCart = async () => {
+    setAddToCartLoading(true);
+    
+    setTimeout(() => {
+      addToCart(book);
+      setAddToCartLoading(false);
+    }, 800);
+  };
+
+  const handleBuyNow = async () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    setBuyNowLoading(true);
+    
+    setTimeout(() => {
+      setBuyNowLoading(false);
+      navigate('/checkout', { state: { buyNowItem: book } });
+    }, 1500);
+  };
+
+  const handleIncreaseQuantity = () => {
+    const cartItem = cartItems.find(item => item.id === book.id);
+    if (cartItem) {
+      updateQuantity(book.id, cartItem.quantity + 1);
+    }
+  };
+
+  const handleDecreaseQuantity = () => {
+    const cartItem = cartItems.find(item => item.id === book.id);
+    if (cartItem) {
+      if (cartItem.quantity === 1) {
+        removeFromCart(book.id);
+      } else {
+        updateQuantity(book.id, cartItem.quantity - 1);
+      }
+    }
+  };
+
+  const getCartQuantity = () => {
+    const cartItem = cartItems.find(item => item.id === book.id);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
+  const isInCart = () => {
+    return cartItems.some(item => item.id === book.id);
+  };
+
+  const handleLogin = (userData) => {
+    const email = userData.email || userData;
+    setUser(email);
+    localStorage.setItem('currentUser', email);
+    setShowAuthModal(false);
+  };
+
+  const handleAddQuestion = () => {
+    if (newQuestion.trim()) {
+      const question = {
+        id: questions.length + 1,
+        question: newQuestion,
+        answer: 'This question is awaiting an answer.',
+        asker: user ? user.split('@')[0] : 'Anonymous',
+        certified: !!user,
+        likes: 0,
+        dislikes: 0
+      };
+      setQuestions([...questions, question]);
+      setNewQuestion('');
+    }
+  };
+
+  const allOffers = [
+    { type: 'Bank Offer', text: '5% cashback on Axis Bank Flipkart Debit Card up to ₹750', code: 'T&C' },
+    { type: 'Bank Offer', text: '5% cashback on Flipkart Axis Bank Credit Card upto ₹4,000', code: 'T&C' },
+    { type: 'Special Price', text: 'Get extra ₹100 off', code: 'T&C' },
+    { type: 'EMI Offer', text: 'No Cost EMI on Credit Card', code: 'T&C' },
+    { type: 'Exchange Offer', text: 'Up to ₹200 off on Exchange', code: 'T&C' },
+    { type: 'Partner Offer', text: 'Sign up for BookKart Pay Later and get free delivery', code: 'T&C' },
+    { type: 'Bank Offer', text: '10% off on HDFC Bank Credit Card', code: 'T&C' },
+    { type: 'Cashback', text: 'Get ₹50 cashback on first order', code: 'T&C' },
+    { type: 'Bundle Offer', text: 'Buy 2 books and get 1 free', code: 'T&C' },
+    { type: 'Student Offer', text: 'Extra 15% off for students', code: 'T&C' }
+  ];
+
   return (
     <div className="book-details-page">
       {/* Main Product Section */}
@@ -884,8 +1003,28 @@ const BookDetails = () => {
                 </div>
               </div>
               <div className="action-buttons">
-                <button className="add-to-cart" onClick={() => addToCart(book)}>🛒 ADD TO CART</button>
-                <button className="buy-now" onClick={() => setShowAuthModal(true)}>⚡ BUY NOW</button>
+                {!isInCart() ? (
+                  <button 
+                    className={`add-to-cart ${addToCartLoading ? 'loading' : ''}`}
+                    onClick={handleAddToCart}
+                    disabled={addToCartLoading}
+                  >
+                    {addToCartLoading ? <span className="spinner"></span> : '🛒 ADD TO CART'}
+                  </button>
+                ) : (
+                  <div className="quantity-controls">
+                    <button className="quantity-btn" onClick={handleDecreaseQuantity}>-</button>
+                    <span className="quantity-display">{getCartQuantity()}</span>
+                    <button className="quantity-btn" onClick={handleIncreaseQuantity}>+</button>
+                  </div>
+                )}
+                <button 
+                  className={`buy-now ${buyNowLoading ? 'loading' : ''}`}
+                  onClick={handleBuyNow}
+                  disabled={buyNowLoading}
+                >
+                  {buyNowLoading ? <span className="spinner"></span> : '⚡ BUY NOW'}
+                </button>
               </div>
             </div>
 
@@ -908,14 +1047,37 @@ const BookDetails = () => {
               </div>
 
               <div className="delivery-info">
-                <div className="protect-fee">+ ₹{Math.floor(book.price * 0.1)} Protect Promise Fee <a href="#">Learn more</a></div>
+                <div className="protect-fee">
+                  + ₹{Math.floor(book.price * 0.1)} Protect Promise Fee 
+                  <button 
+                    className="learn-more-btn"
+                    onClick={() => setShowLearnMore(!showLearnMore)}
+                  >
+                    Learn more
+                  </button>
+                  {showLearnMore && (
+                    <div className="learn-more-content">
+                      <div className="learn-more-popup">
+                        <h4>Protect Promise Fee</h4>
+                        <p>This fee covers:</p>
+                        <ul>
+                          <li>Damage protection during shipping</li>
+                          <li>Replacement guarantee for defective items</li>
+                          <li>Extended return window</li>
+                          <li>Priority customer support</li>
+                        </ul>
+                        <button onClick={() => setShowLearnMore(false)}>Close</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div className="delivery-date">Secure delivery by 29 Jan, Thursday</div>
               </div>
 
               {/* Available Offers */}
               <div className="offers-section">
                 <h3>Available offers</h3>
-                {book.offers.map((offer, index) => (
+                {(showMoreOffers ? allOffers : allOffers.slice(0, 3)).map((offer, index) => (
                   <div key={index} className="offer-item">
                     <span className="offer-icon">🏷️</span>
                     <span className="offer-type">{offer.type}</span>
@@ -923,7 +1085,12 @@ const BookDetails = () => {
                     <span className="offer-code">{offer.code}</span>
                   </div>
                 ))}
-                <button className="view-more-offers">View 9 more offers</button>
+                <button 
+                  className="view-more-offers"
+                  onClick={() => setShowMoreOffers(!showMoreOffers)}
+                >
+                  {showMoreOffers ? 'View less offers' : 'View 9 more offers'}
+                </button>
               </div>
 
               {/* Buy Options */}
@@ -956,35 +1123,52 @@ const BookDetails = () => {
         <div className="container">
           <div className="qa-header">
             <h2>Questions & Answers</h2>
-            <button className="back-to-top">↑ Back to top</button>
+            <button className="back-to-top" onClick={() => window.scrollTo(0, 0)}>↑ Back to top</button>
           </div>
+          
+          {/* Add Question Form */}
+          <div className="add-question-form">
+            <h3>Ask a Question</h3>
+            <div className="question-input-group">
+              <textarea
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+                placeholder="Type your question here..."
+                className="question-input"
+                rows="3"
+              />
+              <button 
+                className="submit-question-btn"
+                onClick={handleAddQuestion}
+                disabled={!newQuestion.trim()}
+              >
+                Submit Question
+              </button>
+            </div>
+          </div>
+
           <div className="qa-list">
-            <div className="qa-item">
-              <div className="question">Q: Is this book available in hardcover?</div>
-              <div className="answer">A: Yes, both paperback and hardcover editions are available.</div>
-              <div className="qa-meta">
-                <span className="asker">book lover</span>
-                <span className="certified">✓ Certified Buyer</span>
-                <div className="qa-actions">
-                  <button>👍 15</button>
-                  <button>👎 2</button>
+            {(showAllQuestions ? questions : questions.slice(0, 2)).map((qa) => (
+              <div key={qa.id} className="qa-item">
+                <div className="question">Q: {qa.question}</div>
+                <div className="answer">A: {qa.answer}</div>
+                <div className="qa-meta">
+                  <span className="asker">{qa.asker}</span>
+                  {qa.certified && <span className="certified">✓ Certified Buyer</span>}
+                  <div className="qa-actions">
+                    <button>👍 {qa.likes}</button>
+                    <button>👎 {qa.dislikes}</button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="qa-item">
-              <div className="question">Q: How many pages does this book have?</div>
-              <div className="answer">A: This book has 236 pages.</div>
-              <div className="qa-meta">
-                <span className="asker">reader123</span>
-                <span className="certified">✓ Certified Buyer</span>
-                <div className="qa-actions">
-                  <button>👍 8</button>
-                  <button>👎 1</button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-          <button className="all-questions">All questions +</button>
+          <button 
+            className="all-questions"
+            onClick={() => setShowAllQuestions(!showAllQuestions)}
+          >
+            {showAllQuestions ? 'Show less questions' : `All questions + (${questions.length})`}
+          </button>
         </div>
       </div>
 
@@ -1091,7 +1275,7 @@ const BookDetails = () => {
       <AuthModal 
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)}
-        onLogin={() => setShowAuthModal(false)}
+        onLogin={handleLogin}
       />
     </div>
   );

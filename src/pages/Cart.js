@@ -1,34 +1,40 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Cart.css';
 
 const Cart = ({ onPlaceOrder }) => {
   const { cartItems, updateQuantity, removeFromCart, getTotalPrice } = useCart();
+  const navigate = useNavigate();
   const [showPincodeModal, setShowPincodeModal] = useState(false);
   const [pincode, setPincode] = useState('');
   const [deliveryStatus, setDeliveryStatus] = useState('');
   const [statusColor, setStatusColor] = useState('');
+  const [placeOrderLoading, setPlaceOrderLoading] = useState(false);
 
   const handlePlaceOrder = () => {
-    if (onPlaceOrder) {
-      onPlaceOrder();
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+      if (onPlaceOrder) {
+        onPlaceOrder();
+      }
+      return;
     }
+    
+    setPlaceOrderLoading(true);
+    
+    setTimeout(() => {
+      setPlaceOrderLoading(false);
+      navigate('/checkout');
+    }, 1500);
   };
 
   const checkPincode = () => {
     if (!pincode) return;
     
-    // Simulate pincode check - some pincodes are available, others are not
-    const availablePincodes = ['110001', '400001', '560001', '600001', '700001', '500001'];
-    const isAvailable = availablePincodes.includes(pincode);
-    
-    if (isAvailable) {
-      setDeliveryStatus('Delivery available in this area');
-      setStatusColor('green');
-    } else {
-      setDeliveryStatus('Sorry, delivery not available in this area');
-      setStatusColor('red');
-    }
+    // Always show delivery available message
+    setDeliveryStatus('Hurry! Delivery available in your area');
+    setStatusColor('green');
   };
 
   if (cartItems.length === 0) {
@@ -85,8 +91,12 @@ const Cart = ({ onPlaceOrder }) => {
               </div>
             ))}
             
-            <button className="place-order-btn" onClick={handlePlaceOrder}>
-              PLACE ORDER
+            <button 
+              className={`place-order-btn ${placeOrderLoading ? 'loading' : ''}`}
+              onClick={handlePlaceOrder}
+              disabled={placeOrderLoading}
+            >
+              {placeOrderLoading ? <span className="spinner"></span> : 'PLACE ORDER'}
             </button>
           </div>
 
@@ -154,11 +164,6 @@ const Cart = ({ onPlaceOrder }) => {
                   {deliveryStatus}
                 </div>
               )}
-              
-              <div className="current-location">
-                <span className="location-icon">📍</span>
-                <span className="location-text">Use my current location</span>
-              </div>
             </div>
           </div>
         </div>
