@@ -9,7 +9,30 @@ const Header = ({ user, onLoginClick, onLogout }) => {
   const cartCount = getTotalItems();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const profileRef = useRef(null);
+  const searchRef = useRef(null);
+
+  // Books database for search
+  const allBooks = {
+    1: { id: 1, title: 'The Power of Now', author: 'Eckhart Tolle', price: 249 },
+    2: { id: 2, title: 'Atomic Habits', author: 'James Clear', price: 299 },
+    3: { id: 3, title: 'Think and Grow Rich', author: 'Napoleon Hill', price: 199 },
+    4: { id: 4, title: 'The 7 Habits of Highly Effective People', author: 'Stephen R. Covey', price: 349 },
+    5: { id: 5, title: 'Rich Dad Poor Dad', author: 'Robert T. Kiyosaki', price: 249 },
+    301: { id: 301, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 199 },
+    302: { id: 302, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 299 },
+    303: { id: 303, title: '1984', author: 'George Orwell', price: 179 },
+    304: { id: 304, title: 'Pride and Prejudice', author: 'Jane Austen', price: 149 },
+    501: { id: 501, title: 'Atomic Habits', author: 'James Clear', price: 299 },
+    601: { id: 601, title: 'The Alchemist', author: 'Paulo Coelho', price: 199 },
+    602: { id: 602, title: 'Harry Potter and the Sorcerer\'s Stone', author: 'J.K. Rowling', price: 299 },
+    701: { id: 701, title: 'The Midnight Library', author: 'Matt Haig', price: 199 },
+    801: { id: 801, title: 'Sapiens', author: 'Yuval Noah Harari', price: 299 },
+    802: { id: 802, title: 'Educated', author: 'Tara Westover', price: 249 },
+    803: { id: 803, title: 'Becoming', author: 'Michelle Obama', price: 349 }
+  };
 
   // Get user display name from localStorage
   const getUserDisplayName = () => {
@@ -21,6 +44,40 @@ const Header = ({ user, onLoginClick, onLogout }) => {
     }
     return (user.email || user)?.split('@')[0] || 'User';
   };
+
+  // Search functionality
+  const getSearchSuggestions = () => {
+    if (!searchTerm.trim()) return [];
+    
+    const books = Object.values(allBooks);
+    return books.filter(book => 
+      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.author.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 5);
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setShowSearchDropdown(value.trim().length > 0);
+  };
+
+  const handleBookSelect = (bookId) => {
+    navigate(`/book/${bookId}`);
+    setSearchTerm('');
+    setShowSearchDropdown(false);
+  };
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   console.log('Header user:', user); // Debug log
 
@@ -78,7 +135,6 @@ const Header = ({ user, onLoginClick, onLogout }) => {
                     <Link to="/orders" className="dropdown-item" onClick={() => handleNavigation('/orders')}>Orders</Link>
                     <Link to="/wishlist" className="dropdown-item" onClick={() => handleNavigation('/wishlist')}>Wishlist</Link>
                     <Link to="/notifications" className="dropdown-item" onClick={() => handleNavigation('/notifications')}>Notifications</Link>
-                    <Link to="/settings" className="dropdown-item" onClick={() => handleNavigation('/settings')}>Settings</Link>
                     <div className="dropdown-item logout-item" onClick={handleLogoutClick}>Logout</div>
                   </div>
                 )}
@@ -106,17 +162,46 @@ const Header = ({ user, onLoginClick, onLogout }) => {
       
       {/* Search Section Below Header */}
       <div className="search-section-below" style={{marginTop: '-50px'}}>
-        <div className="search-bar">
+        <div className="search-bar" ref={searchRef}>
           <input 
             type="text" 
             placeholder="Search for Books, Authors and More"
             className="search-input"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onFocus={() => searchTerm.trim() && setShowSearchDropdown(true)}
           />
           <button className="search-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
+          
+          {/* Search Dropdown */}
+          {showSearchDropdown && (
+            <div className="search-dropdown">
+              {getSearchSuggestions().length > 0 ? (
+                getSearchSuggestions().map(book => (
+                  <div 
+                    key={book.id} 
+                    className="search-suggestion"
+                    onClick={() => handleBookSelect(book.id)}
+                  >
+                    <div className="suggestion-content">
+                      <div className="suggestion-title">{book.title}</div>
+                      <div className="suggestion-author">by {book.author}</div>
+                      <div className="suggestion-price">₹{book.price}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-results">
+                  <div className="no-results-text">No books found for "{searchTerm}"</div>
+                  <div className="not-available">Not available</div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       

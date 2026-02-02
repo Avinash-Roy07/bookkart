@@ -590,3 +590,30 @@
     grid-template-columns: 1fr;
   }
 }
+.wishlist-heart {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #878787;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.wishlist-heart.active {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.wishlist-heart:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}

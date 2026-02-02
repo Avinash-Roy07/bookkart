@@ -14,8 +14,15 @@ const Profile = () => {
   const [isEditingMobile, setIsEditingMobile] = useState(false);
   const [newMobile, setNewMobile] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const [error, setError] = useState('');
+  
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    setShowLogoutConfirm(false);
+    navigate('/');
+  };
   
   // Load user data from localStorage
   const getUserData = () => {
@@ -327,8 +334,6 @@ const Profile = () => {
             </div>
           </div>
         );
-      case 'addresses':
-        return <div className="section-content">Manage Addresses</div>;
       default:
         return <div className="section-content">Select a section</div>;
     }
@@ -370,17 +375,11 @@ const Profile = () => {
               >
                 Profile Information
               </div>
-              <div 
-                className={`submenu-item ${activeSection === 'addresses' ? 'active' : ''}`}
-                onClick={() => setActiveSection('addresses')}
-              >
-                Manage Addresses
-              </div>
             </div>
           </div>
 
           <div className="menu-section">
-            <div className="menu-item logout" onClick={() => navigate('/')}>
+            <div className="menu-item logout" onClick={() => setShowLogoutConfirm(true)}>
               <span className="menu-icon">🚪</span>
               <span className="menu-text">Logout</span>
             </div>
@@ -389,7 +388,7 @@ const Profile = () => {
           <div className="frequently-visited">
             <h4>Frequently Visited:</h4>
             <div className="visited-links">
-              <a href="#">Track Order</a>
+              <a href="#" onClick={() => navigate('/orders')}>Track Order</a>
               <a href="#">Help Center</a>
             </div>
           </div>
@@ -399,6 +398,29 @@ const Profile = () => {
           {renderContent()}
         </div>
       </div>
+      
+      {showLogoutConfirm && (
+        <div className="logout-modal-overlay">
+          <div className="logout-modal">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className="logout-modal-buttons">
+              <button 
+                className="cancel-btn" 
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="confirm-btn" 
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

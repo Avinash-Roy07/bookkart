@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider, useCart } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import BookStore from './pages/BookStore';
@@ -14,7 +15,6 @@ import Profile from './pages/Profile';
 import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import Notifications from './pages/Notifications';
-import Settings from './pages/Settings';
 import AuthModal from './components/AuthModal';
 import AddedToCartPopup from './components/AddedToCartPopup';
 import Footer from './components/Footer';
@@ -99,10 +99,6 @@ function AppContent() {
           path="/notifications" 
           element={user ? <Notifications /> : <Navigate to="/" />} 
         />
-        <Route 
-          path="/settings" 
-          element={user ? <Settings /> : <Navigate to="/" />} 
-        />
       </Routes>
 
       <AuthModal 
@@ -122,7 +118,9 @@ function App() {
   return (
     <Router>
       <CartProvider>
-        <AppContent />
+        <WishlistProvider>
+          <AppContent />
+        </WishlistProvider>
       </CartProvider>
     </Router>
   );

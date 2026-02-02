@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import AuthModal from '../components/AuthModal';
 import '../styles/BookDetails.css';
 
@@ -14,6 +15,7 @@ const BookDetails = () => {
   const [buyNowLoading, setBuyNowLoading] = useState(false);
   const [addToCartLoading, setAddToCartLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [wishlistUpdated, setWishlistUpdated] = useState(0);
   const [showMoreOffers, setShowMoreOffers] = useState(false);
   const [showLearnMore, setShowLearnMore] = useState(false);
   const [showAllQuestions, setShowAllQuestions] = useState(false);
@@ -39,6 +41,7 @@ const BookDetails = () => {
     }
   ]);
   const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart();
+  const { toggleWishlist, isInWishlist, isLoaded } = useWishlist();
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
@@ -884,13 +887,12 @@ const BookDetails = () => {
     return accessories;
   };
 
+  const handleWishlistToggle = () => {
+    toggleWishlist(book);
+  };
+
   const handleAddToCart = async () => {
-    setAddToCartLoading(true);
-    
-    setTimeout(() => {
-      addToCart(book);
-      setAddToCartLoading(false);
-    }, 800);
+    addToCart(book);
   };
 
   const handleBuyNow = async () => {
@@ -999,17 +1001,21 @@ const BookDetails = () => {
               <div className="main-image">
                 <img src={book.images[selectedImage]} alt={book.title} />
                 <div className="image-actions">
-                  <button className="wishlist-btn">♡</button>
+                  <button 
+                    className={`wishlist-btn ${isInWishlist(book.id) ? 'active' : ''}`}
+                    onClick={handleWishlistToggle}
+                  >
+                    {isInWishlist(book.id) ? '♥' : '♡'}
+                  </button>
                 </div>
               </div>
               <div className="action-buttons">
                 {!isInCart() ? (
                   <button 
-                    className={`add-to-cart ${addToCartLoading ? 'loading' : ''}`}
+                    className="add-to-cart"
                     onClick={handleAddToCart}
-                    disabled={addToCartLoading}
                   >
-                    {addToCartLoading ? <span className="spinner"></span> : '🛒 ADD TO CART'}
+                    🛒 ADD TO CART
                   </button>
                 ) : (
                   <div className="quantity-controls">

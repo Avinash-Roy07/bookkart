@@ -1312,9 +1312,15 @@
 .deals-grid {
   display: flex;
   gap: 20px;
-  overflow-x: hidden;
+  overflow-x: auto;
   scroll-behavior: smooth;
   padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.deals-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .scroll-btn {
@@ -1927,9 +1933,17 @@
 }
 
 .gadgets-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
   gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.gadgets-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .gadget-card {

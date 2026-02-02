@@ -108,6 +108,17 @@
   cursor: pointer;
   font-size: 18px;
   color: #878787;
+  transition: all 0.2s;
+}
+
+.wishlist-btn.active {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.wishlist-btn:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
 }
 
 .action-buttons {
@@ -115,6 +126,8 @@
   gap: 12px;
   margin-top: 20px;
   margin-left: 80px;
+  height: 50px;
+  align-items: stretch;
 }
 
 .add-to-cart, .buy-now {
@@ -127,6 +140,31 @@
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.quantity-controls {
+  flex: 1;
+  height: 50px;
+  border: none;
+  border-radius: 2px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: #ff9f00;
 }
 
 .add-to-cart {
@@ -175,14 +213,7 @@
   animation: spin 1s linear infinite;
 }
 
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  background: #ff9f00;
-  border-radius: 2px;
-  height: 50px;
-  flex: 1;
-}
+
 
 .quantity-btn {
   background: none;
